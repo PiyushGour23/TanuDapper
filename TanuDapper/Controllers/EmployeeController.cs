@@ -10,14 +10,17 @@ namespace TanuDapper.Controllers
     public class EmployeeController : ControllerBase
     {
         private readonly IEmployeeRepository _employeeRepository;
-        public EmployeeController(IEmployeeRepository employeeRepository)
+        private readonly ILogger<EmployeeController> _logger;
+        public EmployeeController(IEmployeeRepository employeeRepository, ILogger<EmployeeController> logger)
         {
-            _employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository)); ;
+            _employeeRepository = employeeRepository ?? throw new ArgumentNullException(nameof(employeeRepository)); 
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         [HttpGet("GetAllEmployees")]
         public async Task<IActionResult> GetAll()
         {
+            _logger.LogInformation("Hi This is Tanu");
             var data = await _employeeRepository.GetEmployee();
             if(data == null)
             {
