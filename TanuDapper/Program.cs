@@ -1,3 +1,4 @@
+using AutoMapper;
 using TanuDapper;
 using TanuDapper.Interface;
 using TanuDapper.Repository;
@@ -11,6 +12,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddTransient<DapperDbContext>();
 builder.Services.AddTransient<IEmployeeRepository, EmployeeRepository>();
+var automapper = new MapperConfiguration(item => item.AddProfile(new AutoMapperHandler()));
+IMapper mapper = automapper.CreateMapper();
+builder.Services.AddSingleton(mapper);
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();

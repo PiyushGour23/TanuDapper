@@ -1,6 +1,8 @@
-﻿using Dapper;
+﻿using AutoMapper;
+using Dapper;
 using Microsoft.Extensions.Configuration;
 using System.Data;
+using TanuDapper.Automapper;
 using TanuDapper.Interface;
 using TanuDapper.Model;
 
@@ -9,19 +11,22 @@ namespace TanuDapper.Repository
     public class EmployeeRepository : IEmployeeRepository
     {
         private readonly DapperDbContext _dapperDbContext;
+        private readonly IMapper _mapper;
 
-        public EmployeeRepository(DapperDbContext dapperDbContext)
+        public EmployeeRepository(DapperDbContext dapperDbContext, IMapper mapper)
         {
             _dapperDbContext = dapperDbContext ?? throw new ArgumentNullException(nameof(dapperDbContext));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(dapperDbContext));
         }
 
-        public async Task<List<EmployeeModel>> GetEmployee()
+        public async Task<List<Employee>> GetEmployee()
         {
             string sqlquery = "sp_getemployees";
             using (var db = _dapperDbContext.CreateConnection())
             {
                 var emp = await db.QueryAsync<EmployeeModel>(sqlquery, commandType: CommandType.StoredProcedure);
-                return emp.ToList();
+                var data = _mapper.Map<List<Employee>>(emp);
+                return data;
             }
         }
 
